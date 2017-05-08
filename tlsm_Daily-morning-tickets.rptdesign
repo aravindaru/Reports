@@ -1,0 +1,2265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>sr_tlsm_Daily-morning-tickets</value>
+    </simple-property-list>
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.</property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <method name="initialize"><?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>sr_tlsm_Daily-morning-tickets</value>
+    </simple-property-list>
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.</property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("C:/temp/tlsm_Daily-Morning.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+var maintable = "";
+
+isSR = false;
+isIncident = false;
+isProblem = false;
+
+if (!params["paramdelimiter"].value) {
+	params["paramdelimiter"] = "||";
+}
+if (!params["paramstring"].value &amp;&amp; params["appname"].value) {
+	params["paramstring"] = "appHierarchy="+params["appname"];
+}
+if (params["paramstring"].value) {	
+ 	if (MXReportUtil.isInAppHierarchy("SR", params["paramstring"], params["paramdelimiter"])) {
+		isSR = true;
+	}
+	else if (MXReportUtil.isInAppHierarchy("PROBLEM", params["paramstring"], params["paramdelimiter"])) {
+		isProblem = true;
+	}
+	else if (MXReportUtil.isInAppHierarchy("INCIDENT", params["paramstring"], params["paramdelimiter"])) {
+		isIncident = true;
+	}
+}
+
+scriptLogger.debug("isSR ===> " + isSR);
+scriptLogger.debug("isIncident ===> " + isIncident);
+scriptLogger.debug("isProblem ===> " + isProblem);
+
+
+reportContext.setPersistentGlobalVariable("yes", reportContext.getMessage("yes", reportContext.getLocale()));
+reportContext.setPersistentGlobalVariable("no", reportContext.getMessage("no", reportContext.getLocale()));
+reportContext.setPersistentGlobalVariable("na", reportContext.getMessage("na", reportContext.getLocale()));
+reportContext.setPersistentGlobalVariable("active_tickets", reportContext.getMessage("active_tickets", reportContext.getLocale()));
+reportContext.setPersistentGlobalVariable("wait_tickets", reportContext.getMessage("wait_tickets", reportContext.getLocale()));
+]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">diff</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">now</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">count</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">total_count</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">diff</property>
+                </structure>
+                <structure>
+                    <property name="columnName">now</property>
+                </structure>
+                <structure>
+                    <property name="columnName">count</property>
+                </structure>
+                <structure>
+                    <property name="columnName">total_count</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">diff</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">now</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">count</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">total_count</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+// Get the correct application (SR/PROBLEM/INCIDENT)
+if (params["appname"].value) {
+	tableDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "maintable");
+	tableDataSet.open();
+	sqlText = "select maintbname from maxapps where app='" + params["appname"] + "'";
+	tableDataSet.setQuery(sqlText);
+	if (tableDataSet.fetch()) {
+		maintable = tableDataSet.getString("maintbname").toLowerCase();
+	}
+	tableDataSet.close();
+}else {
+    maintable = "ticket";
+}
+
+scriptLogger.debug("maintable ===> " + maintable);
+
+// Get Translated values from synonmyndomain to use in main query
+
+var CLOSED = "CLOSED";
+var RESOLVED = "RESOLVED";
+var SLAHOLD = "SLAHOLD";
+var DRAFT = "DRAFT";
+
+var domainid = maintable.toUpperCase()+'STATUS';
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "CLOSED");
+statusListDataSet.open();
+
+// This cannot be inlined into the main query since we cannot have a subquery in a Group By
+var sqlText_CLOSED = "select value from synonymdomain where synonymdomain.maxvalue = 'CLOSED' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText_CLOSED);
+while (statusListDataSet.fetch()) {
+	CLOSED = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "RESOLVED");
+statusListDataSet.open();
+var sqlText_RESOLVED = "select value from synonymdomain where synonymdomain.maxvalue = 'RESOLVED' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText_RESOLVED);
+while (statusListDataSet.fetch()) {
+	RESOLVED = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "SLAHOLD");
+statusListDataSet.open();
+sqlText_SLAHOLD = "select value from synonymdomain where synonymdomain.maxvalue = 'SLAHOLD' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText_SLAHOLD);
+if (statusListDataSet.fetch()) {
+	SLAHOLD = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "DRAFT");
+statusListDataSet.open();
+sqlText_DRAFT = "select value from synonymdomain where synonymdomain.maxvalue = 'DRAFT' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText_DRAFT);
+if (statusListDataSet.fetch()) {
+	DRAFT = statusListDataSet.getString("value");
+}
+statusListDataSet.close();
+
+// This is a hack to avoid running into a problem with Mocked status values containg a single quote 
+// A prepared statment cannot be used in the main query as the Case When syntax causes a sql error when used with a prepared statement.
+try
+{
+if(CLOSED.indexOf("'")>0)
+	CLOSED = CLOSED.replace(/'/g, "''")
+if(RESOLVED.indexOf("'")>0)
+	RESOLVED = RESOLVED.replace(/'/g, "''")
+if(SLAHOLD.indexOf("'")>0)
+	SLAHOLD = SLAHOLD.replace(/'/g, "''")
+if(DRAFT.indexOf("'")>0)
+	DRAFT = DRAFT.replace(/'/g, "''")
+}
+catch(e){}
+
+scriptLogger.debug("CLOSED ===> " + CLOSED);
+scriptLogger.debug("RESOLVED ===> " + RESOLVED);
+scriptLogger.debug("SLAHOLD ===> " + SLAHOLD);
+scriptLogger.debug("DRAFT ===> " + DRAFT);
+
+// Get the correct syntax for the average function i.e. average number of days a ticket is open (grouped by status)
+var now = MXReportSqlFormat.getCurrentTimestampFunction();
+var avgText = "";
+if(maximoDataSet.isDB2())
+{
+  avgText = " avg(timestampdiff(16,cast(current_timestamp-cast(reportdate as timestamp) as char(22)))) ";              
+}
+else if(maximoDataSet.isOracle())
+{
+  avgText = " round(avg(trunc(((((86400*( sysdate - reportdate))/60)/60)/24)))) ";  
+}
+else if(maximoDataSet.isSQLServer())
+{
+  avgText = " avg(datediff(day, reportdate, "+now+")) ";
+}
+  
+sqlText = " select "
++ " case when ("+maintable+".status != '"+CLOSED+"' and "+maintable+".status !='"+RESOLVED+"' and "+maintable+".status !='"+SLAHOLD+"')"
++ " then 'Active Tickets' "
++ " when "+maintable+".status = '"+SLAHOLD+"'"
++ " then 'Wait Tickets' end as status, "
++ " count(*) as count,"
++ " (Select count(*) from "+maintable+") as total_count, "
++  avgText+" as diff, "
++  now+" as now " //+ " CURRENT DATE as now "
++ " from "+maintable
++ " where " + params["where"]
++ " and ("+maintable+".pmcomtype is null and "+maintable+".status != '"+DRAFT+"') "
++ " and ("+maintable+".status = '"+SLAHOLD+"' or ("+maintable+".status !='"+CLOSED+"' and "+maintable+".status !='"+RESOLVED+"'))"
++ " group by case when "+maintable+".status != '"+CLOSED+"' and "+maintable+".status !='"+RESOLVED+"' and "+maintable+".status !='"+SLAHOLD+"'"
++ " then 'Active Tickets' "
++ " when "+maintable+".status = '"+SLAHOLD+"'"
++ " then 'Wait Tickets' end"
+;
+
+scriptLogger.debug("SUMMARY SQL ===> " + sqlText);
+
+maximoDataSet.setQuery(sqlText);
+
+]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["status"] = maximoDataSet.getString("status");	
+row["diff"] = maximoDataSet.getString("diff");	
+row["count"] = maximoDataSet.getInteger("count");	
+row["total_count"] = maximoDataSet.getInteger("total_count");	
+row["now"] = maximoDataSet.getTimestamp("now");	
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="DetailDataSet" id="424">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ownergroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">now</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">actual_status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">reportdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">reportedpriority</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">internalpriority</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ticketid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">targetfinish</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">affectedperson</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">changedate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ownergroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actual_status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportedpriority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">internalpriority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ticketid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targetfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">affectedperson</property>
+                </structure>
+                <structure>
+                    <property name="columnName">changedate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">now</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ownergroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">now</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">actual_status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">reportdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">reportedpriority</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">internalpriority</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ticketid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">targetfinish</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">affectedperson</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">changedate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="rowFetchLimit">0</property>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[DetailDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+DetailDataSet.open();
+
+var sqlText = new String();
+
+if (params["appname"].value) {
+	tableDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "maintable");
+	tableDataSet.open();
+	sqlText = "select maintbname from maxapps where app='" + params["appname"] + "'";
+	tableDataSet.setQuery(sqlText);
+	if (tableDataSet.fetch()) {
+		maintable = tableDataSet.getString("maintbname").toLowerCase();
+	}
+	tableDataSet.close();
+}else {
+    maintable = "ticket";
+}
+scriptLogger.debug("maintable ===> " + maintable);
+
+var now = MXReportSqlFormat.getCurrentTimestampFunction();
+var domainid = maintable.toUpperCase()+'STATUS';
+
+// Get Translated values from synonmyndomain to use in main query
+var CLOSED = "CLOSED";
+var RESOLVED = "RESOLVED";
+var SLAHOLD = "SLAHOLD";
+var DRAFT = "DRAFT";
+
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "CLOSED");
+statusListDataSet.open();
+sqlText = "select value from synonymdomain where synonymdomain.maxvalue = 'CLOSED' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText);
+while (statusListDataSet.fetch()) {
+	CLOSED = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "RESOLVED");
+statusListDataSet.open();
+sqlText = "select value from synonymdomain where synonymdomain.maxvalue = 'RESOLVED' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText);
+while (statusListDataSet.fetch()) {
+	RESOLVED = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "SLAHOLD");
+statusListDataSet.open();
+sqlText = "select value from synonymdomain where synonymdomain.maxvalue = 'SLAHOLD' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText);
+if (statusListDataSet.fetch()) {
+	SLAHOLD = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "DRAFT");
+statusListDataSet.open();
+sqlText = "select value from synonymdomain where synonymdomain.maxvalue = 'DRAFT' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText);
+if (statusListDataSet.fetch()) {
+	DRAFT = statusListDataSet.getString("value");
+}
+statusListDataSet.close();
+
+scriptLogger.debug("CLOSED ===> " + CLOSED);
+scriptLogger.debug("RESOLVED ===> " + RESOLVED);
+scriptLogger.debug("SLAHOLD ===> " + SLAHOLD);
+scriptLogger.debug("DRAFT ===> " + DRAFT);
+
+sqlText = " select "
+//+ " case when "+maintable+".status not in ('"+RESOLVED+"','"+CLOSED+"','"+SLAHOLD+"') then 'Active Tickets' "
+//+ " when "+maintable+".status = '"+SLAHOLD+"' then 'Wait Tickets' end as status, "
++ maintable+".ownergroup,"
+//+ "(timestampdiff(16,char(date(current date)-date("+ maintable+".reportdate)))) as diff, "
++ maintable+".status as actual_status, "
++  now+" as now, " //+ " CURRENT DATE as now "
++ maintable+".reportdate, "
++ maintable+".reportedpriority, "
++ maintable+".internalpriority, "
++ maintable+".ticketid,"
++ maintable+".targetfinish, "
++ maintable+".description, "
++ maintable+".affectedperson, "
++ maintable+".changedate " 
++ " from " + maintable
++ " where " + params["where"]
++ " and ("+maintable+".pmcomtype is null and "+maintable+".status != '"+DRAFT+"') " 
++ " and ("+maintable+".status = ? or ("+maintable+".status != ? and "+maintable+".status != ?))"
++ " order by " + maintable+".affectedperson, "+ maintable+".internalpriority,  "+ maintable+".reportedpriority"
+;
+
+DetailDataSet.setQuery(sqlText);
+DetailDataSet.setQueryParameterValue(1, SLAHOLD);
+DetailDataSet.setQueryParameterValue(2, CLOSED);
+DetailDataSet.setQueryParameterValue(3, RESOLVED);]]></method>
+            <method name="fetch"><![CDATA[if (!DetailDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+//row["STATUS"] = DetailDataSet.getString("STATUS");	
+row["ownergroup"] = DetailDataSet.getString("ownergroup");	
+//row["diff"] = DetailDataSet.getString("diff");	
+row["actual_status"] = DetailDataSet.getString("actual_status");	
+row["now"] = DetailDataSet.getTimestamp("now");	
+row["reportdate"] = DetailDataSet.getTimestamp("reportdate");	
+row["reportedpriority"] = DetailDataSet.getString("reportedpriority");	
+row["internalpriority"] = DetailDataSet.getString("internalpriority");	
+row["ticketid"] = DetailDataSet.getString("ticketid");
+row["targetfinish"] = DetailDataSet.getTimestamp("targetfinish");	
+row["description"] = DetailDataSet.getString("description");	
+row["affectedperson"] = DetailDataSet.getString("affectedperson");	
+row["changedate"] = DetailDataSet.getTimestamp("changedate");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="341">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="342">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <property name="type">custom</property>
+            <property name="height">210mm</property>
+            <property name="width">407mm</property>
+            <property name="orientation">landscape</property>
+            <property name="rightMargin">0.03125in</property>
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="1000">
+            <property name="width">100%</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Current_Time</property>
+                    <expression name="expression">BirtDateTime.now()</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <column id="1001"/>
+            <row id="1002">
+                <cell id="1003">
+                    <data id="423">
+                        <property name="fontSize">9pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="resultSetColumn">Current_Time</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1004">
+                <cell id="1005">
+                    <label id="388">
+                        <property name="fontSize">15pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="color">#444E68</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isSR</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text" key="daily_morning_service_requests">Daily Morning Service Requests</text-property>
+                    </label>
+                    <label id="824">
+                        <property name="fontSize">15pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="color">#444E68</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isProblem</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text" key="daily_morning_problems">Daily Morning Problems</text-property>
+                    </label>
+                    <label id="825">
+                        <property name="fontSize">15pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="color">#444E68</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isIncident</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text" key="daily_morning_incidents">Daily Morning Incidents</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="1006">
+                <cell id="1007">
+                    <label id="999">
+                        <property name="fontSize">9pt</property>
+                        <property name="fontWeight">normal</property>
+                        <text-property name="text" key="daily_morning_tickets_report_desc">This report displays summary and detail data for all open tickets.</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+        <table id="906">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">status</property>
+                    <expression name="expression">if(BirtComp.compareString(dataSetRow["status"], 'Active Tickets', true, true))
+  reportContext.getPersistentGlobalVariable("active_tickets");
+else
+   reportContext.getPersistentGlobalVariable("wait_tickets");</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">diff</property>
+                    <expression name="expression">dataSetRow["diff"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">now</property>
+                    <expression name="expression">dataSetRow["now"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">count</property>
+                    <expression name="expression">dataSetRow["count"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">total_count</property>
+                    <expression name="expression">dataSetRow["total_count"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">total_percent</property>
+                    <expression name="expression">dataSetRow["count"]/dataSetRow["total_count"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
+            <column id="934">
+                <property name="width">1.7083333333333333in</property>
+            </column>
+            <column id="935">
+                <property name="width">2.3541666666666665in</property>
+            </column>
+            <column id="936">
+                <property name="width">3.0104166666666665in</property>
+            </column>
+            <column id="937">
+                <property name="width">2.8541666666666665in</property>
+            </column>
+            <column id="938"/>
+            <column id="939"/>
+            <column id="940"/>
+            <column id="941"/>
+            <header>
+                <row id="960">
+                    <property name="backgroundColor">#7B91A5</property>
+                    <cell id="961">
+                        <label id="881">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="summary_for">Summary For</text-property>
+                        </label>
+                    </cell>
+                    <cell id="962">
+                        <label id="882">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isSR</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="total_service_requests">Total Service Requests</text-property>
+                        </label>
+                        <label id="901">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isProblem</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="total_problems">Total Problems</text-property>
+                        </label>
+                        <label id="900">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isIncident</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="total_incidents">Total Incidents</text-property>
+                        </label>
+                    </cell>
+                    <cell id="963">
+                        <label id="883">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="%_of_total">% of Total</text-property>
+                        </label>
+                    </cell>
+                    <cell id="964">
+                        <label id="884">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="average_days_open">Average Days Open</text-property>
+                        </label>
+                    </cell>
+                    <cell id="965">
+                        <property name="colSpan">4</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="916">
+                    <cell id="917">
+                        <data id="847">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="918">
+                        <data id="885">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">count</property>
+                        </data>
+                    </cell>
+                    <cell id="919">
+                        <data id="886">
+                            <property name="fontSize">8pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Percent</property>
+                                <property name="pattern">Percent</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">total_percent</property>
+                        </data>
+                    </cell>
+                    <cell id="920">
+                        <data id="887">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">diff</property>
+                        </data>
+                    </cell>
+                    <cell id="921"/>
+                    <cell id="922"/>
+                    <cell id="923"/>
+                    <cell id="924"/>
+                </row>
+            </detail>
+            <footer>
+                <row id="925">
+                    <cell id="926">
+                        <label id="989">
+                            <text-property name="text">             </text-property>
+                        </label>
+                    </cell>
+                    <cell id="927"/>
+                    <cell id="928"/>
+                    <cell id="929"/>
+                    <cell id="930"/>
+                    <cell id="931"/>
+                    <cell id="932"/>
+                    <cell id="933"/>
+                </row>
+            </footer>
+        </table>
+        <table id="694">
+            <property name="width">100%</property>
+            <property name="dataSet">DetailDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ownergroup</property>
+                    <expression name="expression">dataSetRow["ownergroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">now</property>
+                    <expression name="expression">dataSetRow["now"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">actual_status</property>
+                    <expression name="expression">dataSetRow["actual_status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reportdate</property>
+                    <expression name="expression">dataSetRow["reportdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">reportedpriority</property>
+                    <expression name="expression">dataSetRow["reportedpriority"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">internalpriority</property>
+                    <expression name="expression">dataSetRow["internalpriority"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">ticketid</property>
+                    <expression name="expression">dataSetRow["ticketid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">targetfinish</property>
+                    <expression name="expression">dataSetRow["targetfinish"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">affectedperson</property>
+                    <expression name="expression">dataSetRow["affectedperson"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">changedate</property>
+                    <expression name="expression">dataSetRow["changedate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">criteria</property>
+                    <expression name="expression">if (DateTimeSpan.seconds(dataSetRow["targetfinish"],dataSetRow["now"])> 0) 
+ reportContext.getPersistentGlobalVariable("yes");
+else if (dataSetRow["targetfinish"] == null)
+ reportContext.getPersistentGlobalVariable("na");
+else
+ reportContext.getPersistentGlobalVariable("no");</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="738"/>
+            <column id="739"/>
+            <column id="740"/>
+            <column id="741"/>
+            <column id="742"/>
+            <column id="743"/>
+            <column id="744"/>
+            <column id="745"/>
+            <column id="746"/>
+            <column id="747"/>
+            <header>
+                <row id="695">
+                    <cell id="697">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="751">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isSR</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="service_request">Service Request</text-property>
+                        </label>
+                        <label id="829">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isProblem</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="problem">Problem</text-property>
+                        </label>
+                        <label id="828">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isIncident</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="incident">Incident</text-property>
+                        </label>
+                    </cell>
+                    <cell id="698">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="752">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="status">Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="699">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="753">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="affected_person">Affected  Person</text-property>
+                        </label>
+                    </cell>
+                    <cell id="700">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="754">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="description">Description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="701">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="755">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="reported_date">Reported Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="702">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="756">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="target_finish">Target Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="703">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="757">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="last_updated">Last Updated</text-property>
+                        </label>
+                    </cell>
+                    <cell id="704">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="758">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="internal_priority">Internal Priority</text-property>
+                        </label>
+                    </cell>
+                    <cell id="705">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="759">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="reported_priority">Reported Priority</text-property>
+                        </label>
+                    </cell>
+                    <cell id="706">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="760">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="out_of_criteria">Out of criteria</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="709">
+                    <cell id="711">
+                        <data id="831">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">ticketid</property>
+                        </data>
+                    </cell>
+                    <cell id="712">
+                        <data id="832">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">actual_status</property>
+                        </data>
+                    </cell>
+                    <cell id="713">
+                        <data id="833">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">affectedperson</property>
+                        </data>
+                    </cell>
+                    <cell id="714">
+                        <data id="834">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="715">
+                        <data id="835">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">reportdate</property>
+                        </data>
+                    </cell>
+                    <cell id="716">
+                        <data id="836">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">targetfinish</property>
+                        </data>
+                    </cell>
+                    <cell id="717">
+                        <data id="837">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">changedate</property>
+                        </data>
+                    </cell>
+                    <cell id="718">
+                        <data id="841">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">internalpriority</property>
+                        </data>
+                    </cell>
+                    <cell id="719">
+                        <data id="839">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">reportedpriority</property>
+                        </data>
+                    </cell>
+                    <cell id="720">
+                        <data id="771">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">criteria</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="723">
+                    <cell id="725"/>
+                    <cell id="726"/>
+                    <cell id="727"/>
+                    <cell id="728"/>
+                    <cell id="729"/>
+                    <cell id="730"/>
+                    <cell id="731"/>
+                    <cell id="732"/>
+                    <cell id="733"/>
+                    <cell id="734"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>
+</method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">diff</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">now</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">count</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">total_count</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">diff</property>
+                </structure>
+                <structure>
+                    <property name="columnName">now</property>
+                </structure>
+                <structure>
+                    <property name="columnName">count</property>
+                </structure>
+                <structure>
+                    <property name="columnName">total_count</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">diff</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">now</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">count</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">total_count</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[chart2DataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+chart2DataSet.open();
+
+var sqlText = new String();
+
+// Replace main table name of app with "ticket" for bound site parameter in where clause 
+var where = new String(reportContext.getParameterValue("where"));
+// Only perform if appname is not null (it might be in the designer)
+if (params["appname"].value)
+{
+	var maintable = "";
+	tableDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "maintable");
+	tableDataSet.open();
+	sqlText = "select maintbname from maxapps where app = '" + params["appname"] + "'";
+	tableDataSet.setQuery(sqlText);
+	if (tableDataSet.fetch())
+		maintable = tableDataSet.getString("maintbname") + ".";
+	tableDataSet.close();
+	var re = new RegExp(maintable, 'gi'); 
+	where = where.replace(re, "ticket.");
+}
+
+sqlText = "select ticket.siteid, ticket.class, count(*) as ticket_count from ticket"
++ " where ticket.status in"
++ " (select value from synonymdomain where synonymdomain.maxvalue not in ('RESOLVED', 'CLOSED')"
++ " and synonymdomain.domainid in ('INCIDENTSTATUS', 'PROBLEMSTATUS', 'SRSTATUS')) and " + where
++ " group by ticket.siteid, ticket.class"
+//+ " order by ticket.status, ticket.internalpriority, ticket.reportdate"
+;
+
+chart2DataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!chart2DataSet.fetch())
+	return (false);
+
+row["class"] = chart2DataSet.getString("class");
+row["siteid"] = chart2DataSet.getString("siteid");
+row["ticket_count"] = chart2DataSet.getDouble("ticket_count");
+
+if (row["siteid"] == null)
+	row["siteid"] = reportContext.getMessage("none.dataitem", reportContext.getLocale());
+	
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="DetailDataSet" id="424">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ownergroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">now</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">actual_status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">reportdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">reportedpriority</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">internalpriority</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ticketid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">targetfinish</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">affectedperson</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">changedate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ownergroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actual_status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportedpriority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">internalpriority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ticketid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targetfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">affectedperson</property>
+                </structure>
+                <structure>
+                    <property name="columnName">changedate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">now</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ownergroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">now</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">actual_status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">reportdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">reportedpriority</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">internalpriority</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ticketid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">targetfinish</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">affectedperson</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">changedate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="rowFetchLimit">0</property>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[DetailDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+DetailDataSet.open();
+
+var sqlText = new String();
+
+if (params["appname"].value) {
+	tableDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "maintable");
+	tableDataSet.open();
+	sqlText = "select maintbname from maxapps where app='" + params["appname"] + "'";
+	tableDataSet.setQuery(sqlText);
+	if (tableDataSet.fetch()) {
+		maintable = tableDataSet.getString("maintbname").toLowerCase();
+	}
+	tableDataSet.close();
+}else {
+    maintable = "ticket";
+}
+scriptLogger.debug("maintable ===> " + maintable);
+
+var now = MXReportSqlFormat.getCurrentTimestampFunction();
+var domainid = maintable.toUpperCase()+'STATUS';
+
+// Get Translated values from synonmyndomain to use in main query
+var CLOSED = "CLOSED";
+var RESOLVED = "RESOLVED";
+var SLAHOLD = "SLAHOLD";
+var DRAFT = "DRAFT";
+
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "CLOSED");
+statusListDataSet.open();
+sqlText = "select value from synonymdomain where synonymdomain.maxvalue = 'CLOSED' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText);
+while (statusListDataSet.fetch()) {
+	CLOSED = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "RESOLVED");
+statusListDataSet.open();
+sqlText = "select value from synonymdomain where synonymdomain.maxvalue = 'RESOLVED' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText);
+while (statusListDataSet.fetch()) {
+	RESOLVED = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "SLAHOLD");
+statusListDataSet.open();
+sqlText = "select value from synonymdomain where synonymdomain.maxvalue = 'SLAHOLD' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText);
+if (statusListDataSet.fetch()) {
+	SLAHOLD = statusListDataSet.getString("value");
+}
+statusListDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "DRAFT");
+statusListDataSet.open();
+sqlText = "select value from synonymdomain where synonymdomain.maxvalue = 'DRAFT' and synonymdomain.domainid ='"+domainid+"'";
+statusListDataSet.setQuery(sqlText);
+if (statusListDataSet.fetch()) {
+	DRAFT = statusListDataSet.getString("value");
+}
+statusListDataSet.close();
+
+scriptLogger.debug("CLOSED ===> " + CLOSED);
+scriptLogger.debug("RESOLVED ===> " + RESOLVED);
+scriptLogger.debug("SLAHOLD ===> " + SLAHOLD);
+scriptLogger.debug("DRAFT ===> " + DRAFT);
+
+sqlText = " select "
+//+ " case when "+maintable+".status not in ('"+RESOLVED+"','"+CLOSED+"','"+SLAHOLD+"') then 'Active Tickets' "
+//+ " when "+maintable+".status = '"+SLAHOLD+"' then 'Wait Tickets' end as status, "
++ maintable+".ownergroup,"
+//+ "(timestampdiff(16,char(date(current date)-date("+ maintable+".reportdate)))) as diff, "
++ maintable+".status as actual_status, "
++  now+" as now, " //+ " CURRENT DATE as now "
++ maintable+".reportdate, "
++ maintable+".reportedpriority, "
++ maintable+".internalpriority, "
++ maintable+".ticketid,"
++ maintable+".targetfinish, "
++ maintable+".description, "
++ maintable+".affectedperson, "
++ maintable+".changedate " 
++ " from " + maintable
++ " where " + params["where"]
++ " and ("+maintable+".pmcomtype is null and "+maintable+".status != '"+DRAFT+"') " 
++ " and ("+maintable+".status = ? or ("+maintable+".status != ? and "+maintable+".status != ?))"
++ " order by " + maintable+".affectedperson, "+ maintable+".internalpriority,  "+ maintable+".reportedpriority"
+;
+
+DetailDataSet.setQuery(sqlText);
+DetailDataSet.setQueryParameterValue(1, SLAHOLD);
+DetailDataSet.setQueryParameterValue(2, CLOSED);
+DetailDataSet.setQueryParameterValue(3, RESOLVED);]]></method>
+            <method name="fetch"><![CDATA[if (!DetailDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+//row["STATUS"] = DetailDataSet.getString("STATUS");	
+row["ownergroup"] = DetailDataSet.getString("ownergroup");	
+//row["diff"] = DetailDataSet.getString("diff");	
+row["actual_status"] = DetailDataSet.getString("actual_status");	
+row["now"] = DetailDataSet.getTimestamp("now");	
+row["reportdate"] = DetailDataSet.getTimestamp("reportdate");	
+row["reportedpriority"] = DetailDataSet.getString("reportedpriority");	
+row["internalpriority"] = DetailDataSet.getString("internalpriority");	
+row["ticketid"] = DetailDataSet.getString("ticketid");
+row["targetfinish"] = DetailDataSet.getTimestamp("targetfinish");	
+row["description"] = DetailDataSet.getString("description");	
+row["affectedperson"] = DetailDataSet.getString("affectedperson");	
+row["changedate"] = DetailDataSet.getTimestamp("changedate");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="341">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="342">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <property name="type">custom</property>
+            <property name="height">210mm</property>
+            <property name="width">407mm</property>
+            <property name="orientation">landscape</property>
+            <property name="rightMargin">0.03125in</property>
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="1000">
+            <property name="width">100%</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Current_Time</property>
+                    <expression name="expression">BirtDateTime.now()</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <column id="1001"/>
+            <row id="1002">
+                <cell id="1003">
+                    <data id="423">
+                        <property name="fontSize">9pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="resultSetColumn">Current_Time</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="1004">
+                <cell id="1005">
+                    <label id="388">
+                        <property name="fontSize">15pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="color">#444E68</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isSR</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text" key="daily_morning_service_requests">Daily Morning Service Requests</text-property>
+                    </label>
+                    <label id="824">
+                        <property name="fontSize">15pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="color">#444E68</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isProblem</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text" key="daily_morning_problems">Daily Morning Problems</text-property>
+                    </label>
+                    <label id="825">
+                        <property name="fontSize">15pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="color">#444E68</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isIncident</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text" key="daily_morning_incidents">Daily Morning Incidents</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="1006">
+                <cell id="1007">
+                    <label id="999">
+                        <property name="fontSize">9pt</property>
+                        <property name="fontWeight">normal</property>
+                        <text-property name="text" key="daily_morning_tickets_report_desc">This report displays summary and detail data for all open tickets.</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+        <table id="906">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">status</property>
+                    <expression name="expression">if(BirtComp.compareString(dataSetRow["status"], 'Active Tickets', true, true))
+  reportContext.getPersistentGlobalVariable("active_tickets");
+else
+   reportContext.getPersistentGlobalVariable("wait_tickets");</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">diff</property>
+                    <expression name="expression">dataSetRow["diff"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">now</property>
+                    <expression name="expression">dataSetRow["now"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">count</property>
+                    <expression name="expression">dataSetRow["count"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">total_count</property>
+                    <expression name="expression">dataSetRow["total_count"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">total_percent</property>
+                    <expression name="expression">dataSetRow["count"]/dataSetRow["total_count"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
+            <column id="934">
+                <property name="width">1.7083333333333333in</property>
+            </column>
+            <column id="935">
+                <property name="width">2.3541666666666665in</property>
+            </column>
+            <column id="936">
+                <property name="width">3.0104166666666665in</property>
+            </column>
+            <column id="937">
+                <property name="width">2.8541666666666665in</property>
+            </column>
+            <column id="938"/>
+            <column id="939"/>
+            <column id="940"/>
+            <column id="941"/>
+            <header>
+                <row id="960">
+                    <property name="backgroundColor">#7B91A5</property>
+                    <cell id="961">
+                        <label id="881">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="summary_for">Summary For</text-property>
+                        </label>
+                    </cell>
+                    <cell id="962">
+                        <label id="882">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isSR</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="total_service_requests">Total Service Requests</text-property>
+                        </label>
+                        <label id="901">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isProblem</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="total_problems">Total Problems</text-property>
+                        </label>
+                        <label id="900">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isIncident</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="total_incidents">Total Incidents</text-property>
+                        </label>
+                    </cell>
+                    <cell id="963">
+                        <label id="883">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="%_of_total">% of Total</text-property>
+                        </label>
+                    </cell>
+                    <cell id="964">
+                        <label id="884">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="average_days_open">Average Days Open</text-property>
+                        </label>
+                    </cell>
+                    <cell id="965">
+                        <property name="colSpan">4</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="916">
+                    <cell id="917">
+                        <data id="847">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="918">
+                        <data id="885">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">count</property>
+                        </data>
+                    </cell>
+                    <cell id="919">
+                        <data id="886">
+                            <property name="fontSize">8pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Percent</property>
+                                <property name="pattern">Percent</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">total_percent</property>
+                        </data>
+                    </cell>
+                    <cell id="920">
+                        <data id="887">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">diff</property>
+                        </data>
+                    </cell>
+                    <cell id="921"/>
+                    <cell id="922"/>
+                    <cell id="923"/>
+                    <cell id="924"/>
+                </row>
+            </detail>
+            <footer>
+                <row id="925">
+                    <cell id="926">
+                        <label id="989">
+                            <text-property name="text">             </text-property>
+                        </label>
+                    </cell>
+                    <cell id="927"/>
+                    <cell id="928"/>
+                    <cell id="929"/>
+                    <cell id="930"/>
+                    <cell id="931"/>
+                    <cell id="932"/>
+                    <cell id="933"/>
+                </row>
+            </footer>
+        </table>
+        <table id="694">
+            <property name="width">100%</property>
+            <property name="dataSet">DetailDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ownergroup</property>
+                    <expression name="expression">dataSetRow["ownergroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">now</property>
+                    <expression name="expression">dataSetRow["now"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">actual_status</property>
+                    <expression name="expression">dataSetRow["actual_status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reportdate</property>
+                    <expression name="expression">dataSetRow["reportdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">reportedpriority</property>
+                    <expression name="expression">dataSetRow["reportedpriority"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">internalpriority</property>
+                    <expression name="expression">dataSetRow["internalpriority"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">ticketid</property>
+                    <expression name="expression">dataSetRow["ticketid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">targetfinish</property>
+                    <expression name="expression">dataSetRow["targetfinish"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">affectedperson</property>
+                    <expression name="expression">dataSetRow["affectedperson"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">changedate</property>
+                    <expression name="expression">dataSetRow["changedate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">criteria</property>
+                    <expression name="expression">if (DateTimeSpan.seconds(dataSetRow["targetfinish"],dataSetRow["now"])> 0) 
+ reportContext.getPersistentGlobalVariable("yes");
+else if (dataSetRow["targetfinish"] == null)
+ reportContext.getPersistentGlobalVariable("na");
+else
+ reportContext.getPersistentGlobalVariable("no");</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="738"/>
+            <column id="739"/>
+            <column id="740"/>
+            <column id="741"/>
+            <column id="742"/>
+            <column id="743"/>
+            <column id="744"/>
+            <column id="745"/>
+            <column id="746"/>
+            <column id="747"/>
+            <header>
+                <row id="695">
+                    <cell id="697">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="751">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isSR</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="service_request">Service Request</text-property>
+                        </label>
+                        <label id="829">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isProblem</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="problem">Problem</text-property>
+                        </label>
+                        <label id="828">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!isIncident</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="incident">Incident</text-property>
+                        </label>
+                    </cell>
+                    <cell id="698">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="752">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="status">Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="699">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="753">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="affected_person">Affected  Person</text-property>
+                        </label>
+                    </cell>
+                    <cell id="700">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="754">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="description">Description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="701">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="755">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="reported_date">Reported Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="702">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="756">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="target_finish">Target Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="703">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="757">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="last_updated">Last Updated</text-property>
+                        </label>
+                    </cell>
+                    <cell id="704">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="758">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="internal_priority">Internal Priority</text-property>
+                        </label>
+                    </cell>
+                    <cell id="705">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="759">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="reported_priority">Reported Priority</text-property>
+                        </label>
+                    </cell>
+                    <cell id="706">
+                        <property name="backgroundColor">#7B91A5</property>
+                        <label id="760">
+                            <property name="fontSize">9pt</property>
+                            <property name="color">#FFFFFF</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="out_of_criteria">Out of criteria</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="709">
+                    <cell id="711">
+                        <data id="831">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">ticketid</property>
+                        </data>
+                    </cell>
+                    <cell id="712">
+                        <data id="832">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">actual_status</property>
+                        </data>
+                    </cell>
+                    <cell id="713">
+                        <data id="833">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">affectedperson</property>
+                        </data>
+                    </cell>
+                    <cell id="714">
+                        <data id="834">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="715">
+                        <data id="835">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">reportdate</property>
+                        </data>
+                    </cell>
+                    <cell id="716">
+                        <data id="836">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">targetfinish</property>
+                        </data>
+                    </cell>
+                    <cell id="717">
+                        <data id="837">
+                            <property name="fontSize">8pt</property>
+                            <property name="resultSetColumn">changedate</property>
+                        </data>
+                    </cell>
+                    <cell id="718">
+                        <data id="841">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">internalpriority</property>
+                        </data>
+                    </cell>
+                    <cell id="719">
+                        <data id="839">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">reportedpriority</property>
+                        </data>
+                    </cell>
+                    <cell id="720">
+                        <data id="771">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">criteria</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="723">
+                    <cell id="725"/>
+                    <cell id="726"/>
+                    <cell id="727"/>
+                    <cell id="728"/>
+                    <cell id="729"/>
+                    <cell id="730"/>
+                    <cell id="731"/>
+                    <cell id="732"/>
+                    <cell id="733"/>
+                    <cell id="734"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>
